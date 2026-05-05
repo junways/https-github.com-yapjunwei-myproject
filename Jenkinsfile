@@ -2,15 +2,14 @@ pipeline {
     agent any
     
     stages {
-        stage('Build Docker Image') {
+        stage('Build and Push Docker Image') {
             steps {
-                sh 'docker build -t junweill111/mynewimage:latest .'
-            }
-        }
-        
-        stage('Push Docker Image') {
-            steps {
-                sh 'docker push junweill111/mynewimage:latest'
+                script {
+                    docker.build("junweill111/mynewimage:latest")
+                    docker.withRegistry('', 'docker-hub-credentials-id') {
+                        docker.image("junweill111/mynewimage:latest").push()
+                    }
+                }
             }
         }
     }
